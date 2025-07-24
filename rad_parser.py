@@ -55,31 +55,6 @@ def parse_measurement(data: bytes) -> dict:
     return result
 
 
-def parse_c1(data: bytes, len: int) -> dict:
-    result = {}
-
-    parse_long_int = lambda x : struct.unpack('<L', x)[0]
-    parse_4b_float = lambda x : struct.unpack('<f', x)[0]
-    parse_dimension = lambda x : zero_terminated(struct.unpack('8s', x)[0].decode('latin-1'))
-    parse_date =  lambda x : struct.unpack('7s', x)[0].decode('latin-1')
-
-    result["secs_of_month"], data = parse_slice(data, 4, parse_long_int)
-    result["value"], data = parse_slice(data, 4, parse_4b_float)
-    _, data = parse_slice(data, len - 44, lambda _: None)
-    result["dimension"], data = parse_slice(data, 8, parse_dimension)
-    result["alarm"], data = parse_slice(data, 4, parse_long_int)
-    result["status"], data = parse_slice(data, 4, parse_long_int)
-    result["interval"], data = parse_slice(data, 4, parse_long_int)
-    result["date"], data = parse_slice(data, 7, parse_date)
-    result["time"], data = parse_slice(data, 7, parse_date)
-
-    #if len(data) != 2:
-        #return None
-
-    return result
-
-
-
 def convert_to_uSv(value: float, dim: str) -> float:
     if dim == 'Sv/h':
         return value * 1e6
