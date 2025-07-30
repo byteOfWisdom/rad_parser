@@ -64,13 +64,25 @@ def convert_to_uSv(value: float, dim: str) -> float:
     return math.nan
 
 
+def validate(data: np.array) -> bool:
+    valid_padding = lambda x, i: x[44 * i + 42] == 32 and x[44 * i + 43] == 32 and x[44 * i + 44] != 32
+    res = True
+    for i in range((len(data) // 44) - 1):
+        res = res and valid_padding(data, i)
+
+    if not validate:
+        print("akjdfljas;dlfja;lsdfkj")
+        exit()
+    return res
+
+
 def parse_file(filename: str) -> dict:
     data = read_bytes(filename)
     valid_padding = lambda x: x[42] == 32 and x[43] == 32 and x[44] != 32
 
     before_trim = len(data)
 
-    while (not valid_padding(data)) and (not len(data) % 44 == 0):
+    while (not validate(data)) and (not len(data) % 44 == 0):
         data = data[1:]
 
     measurements = list(chunks(data, 44))
