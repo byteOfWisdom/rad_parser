@@ -7,7 +7,7 @@ typedef struct{
 	uint32_t time;
 	float value;
 	unsigned char unit[8];
-	uint32_t alarm;
+	int32_t alarm;
 	uint32_t status;
 	uint32_t intervall;
 	unsigned char date[6];
@@ -25,14 +25,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	FILE* source = fopen(argv[1], "r");
-//	FILE* sink = fopen(argv[1], "w");
 	uint8_t buff[44];
 	printf("time; value; unit; alarm; status; intervall; date; time_string; filler\n");
 	while (fread(buff, 44, 1, source) == 1) {
 		data_point* dp = (data_point*) buff;
 		dp->delim = 0;
 		dp->delim2 = 0;
-		printf("%i; %f; %s; %i; %i; %i; %s; %s; 0x%0x2\n", dp->time, dp->value, dp->unit, dp->alarm, dp->status, dp->intervall, dp->date, dp->time_string, dp->filler);
+		printf("%i; %f; %s; %i; 0x%0x4; %i; %s; %s; 0x%0x2\n", dp->time, dp->value, dp->unit, dp->alarm, dp->status, dp->intervall, dp->date, dp->time_string, dp->filler);
 	}
 	return 0;
 }
